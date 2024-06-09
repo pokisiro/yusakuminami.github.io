@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Yusaku and Minami's Homepage</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        header, nav, main, footer {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        header {
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            border-radius: 8px 8px 0 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            background-color: #218838;
+            margin: 0;
+            overflow: hidden;
+            border-radius: 0 0 8px 8px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 14px 20px;
+            display: inline-block;
+        }
+        nav ul li a:hover {
+            background-color: #1e7e34;
+        }
+        .section {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .memo, .album, .event, .comment, .photo {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .memo p, .comment p, .message p {
+            margin: 0;
+            white-space: pre-line; /* 改行を反映させる */
+        }
+        .actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none; /* 初期は非表示 */
+        }
+        .actions button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background-color: #c82333;
+        }
+        .memo:hover .actions, .comment:hover .actions, .message:hover .actions, .calendar-event:hover .actions, .photo:hover .actions {
+            display: block; /* ホバー時に表示 */
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        form input[type="text"], form input[type="date"], form input[type="file"], form textarea, form select, form input[type="datetime-local"], form input[type="time"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        form button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+        footer {
+            text-align: center;
+            background-color: #218838;
+            color: white;
+            padding: 10px 0;
+            border-radius: 0 0 8px 8px;
+        }
+        .yusaku-event {
+            background-color: lightblue;
+        }
+        .minami-event {
+            background-color: yellow;
+        }
+        .common-event {
+            background-color: orange;
+        }
+        .photo img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 10px;
+        }
+        .album-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .message.yusaku {
+            background-color: lightblue;
+            text-align: right;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .message.minami {
+            background-color: yellow;
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .message .actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .thumbnail {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .thumbnail-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-day {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .calendar-day header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .calendar-event {
+            margin-top: 5px;
+            padding: 5px;
+            border-radius: 4px;
+            position: relative; /* 削除ボタンの位置調整のため追加 */
+        }
+        .calendar-event .actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Yusaku and Minami's Homepage</h1>
+        <p id="daysTogether"></p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#memoSection">メモ</a></li>
+            <li><a href="#albumSection">アルバム</a></li>
+            <li><a href="#calendarSection">共有カレンダー</a></li>
+            <li><a href="#messageSection">メッセージ</a></li>
+        </ul>
+    </nav>
+    <main>
+        <!-- メモ機能 -->
+        <section id="memoSection" class="section">
+            <h2>メモ</h2>
+            <form id="memoForm">
+                <label for="memo">新しいメモ:</label>
+                <textarea id="memo" name="memo" rows="4" cols="50" required></textarea>
+                <label for="memoSender">送信者:</label>
+                <select id="memoSender" name="memoSender" required>
+                    <option value="yusaku">Yusaku</option>
+                    <option value="minami">Minami</option>
+                </select>
+                <button type="submit">保存</button>
+            </form>
+            <div id="memoDisplay"></div>
+        </section>
+
+        <!-- アルバム機能 -->
+        <section id="albumSection" class="section">
+            <h2>アルバム</h2>
+            <form id="albumForm">
+                <label for="albumName">アルバム名:</label>
+                <input type="text" id="albumName" name="albumName" required>
+                <button type="submit">作成</button>
+            </form>
+
+            <form id="photoUploadForm">
+                <label for="albumSelect">アルバムを選択:</label>
+                <select id="albumSelect" name="albumSelect" required></select>
+                <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple required>
+                <button type="submit">アップロード</button>
+            </form>
+
+            <form id="commentForm">
+                <label for="albumCommentSelect">アルバムを選択:</label>
+                <select id="albumCommentSelect" name="albumCommentSelect" required></select>
+                <textarea id="comment" name="comment" rows="4" cols="50" placeholder="コメントを追加"></textarea>
+                <button type="submit">コメント追加</button>
+            </form>
+            <div id="albumsDisplay"></div>
+        </section>
+
+        <!-- 共有カレンダー機能 -->
+        <section id="calendarSection" class="section">
+            <h2>共有カレンダー</h2>
+            <div id="calendarDisplay" class="calendar"></div>
+            <form id="eventForm">
+                <label for="eventStartDate">開始日付と時間:</label>
+                <input type="datetime-local" id="eventStartDate" name="eventStartDate" required>
+                <label for="eventEndDate">終了日付と時間:</label>
+                <input type="datetime-local" id="eventEndDate" name="eventEndDate">
+                <label for="eventAllDay">終日:</label>
+                <input type="checkbox" id="eventAllDay" name="eventAllDay">
+                <label for="eventDescription">予定内容:</label>
+                <input type="text" id="eventDescription" name="eventDescription" required>
+                <label for="eventPerson">誰の予定ですか？:</label>
+                <select id="eventPerson" name="eventPerson" required>
+                    <option value="yusaku">Yusaku</option>
+                    <option value="minami">Minami</option>
+                    <option value="common">共通</option>
+                </select>
+                <button type="submit">追加</button>
+            </form>
+        </section>
+
+        <!-- メッセージ機能 -->
+        <section id="messageSection" class="section">
+            <h2>メッセージ</h2>
+            <form id="messageForm">
+                <label for="message">新しいメッセージ:</label>
+                <textarea id="message" name="message" rows="4" cols="50" required></textarea>
+                <label for="messageSender">送信者:</label>
+                <select id="messageSender" name="messageSender" required>
+                    <option value="yusaku">Yusaku</option>
+                    <option value="minami">Minami</option>
+                </select>
+                <button type="submit">送信</button>
+            </form>
+            <div id="messageDisplay"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Yusaku and Minami's Homepage</p>
+    </footer>
+
+    <script>
+        // 日付カウンターの設定
+        function updateDaysTogether() {
+            const startDate = new Date('2022-05-07');
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('daysTogether').textContent = `付き合って ${diffDays} 日`;
+        }
+        updateDaysTogether();
+
+        // メモ機能
+        function saveMemo() {
+            const memoText = document.getElementById('memo').value;
+            const memoSender = document.getElementById('memoSender').value;
+            const memoDate = new Date().toLocaleString();
+            if (memoText.trim() !== "") {
+                const memos = JSON.parse(localStorage.getItem('memos')) || [];
+                memos.push({ text: memoText, sender: memoSender, date: memoDate });
+                localStorage.setItem('memos', JSON.stringify(memos));
+                document.getElementById('memo').value = '';  // メモ入力欄をクリア
+                loadMemos();
+            }
+        }
+
+        function loadMemos() {
+            const memos = JSON.parse(localStorage.getItem('memos')) || [];
+            const memoDisplay = document.getElementById('memoDisplay');
+            memoDisplay.innerHTML = '';
+            memos.forEach((memo, index) => {
+                const newMemo = document.createElement('div');
+                newMemo.classList.add('memo');
+                newMemo.innerHTML = `<p>${memo.text}</p>
+                    <small>${memo.sender} - ${memo.date}</small>
+                    <div class="actions">
+                        <button onclick="deleteMemo(${index})">削除</button>
+                    </div>`;
+                memoDisplay.appendChild(newMemo);
+            });
+        }
+
+        function deleteMemo(index) {
+            const memos = JSON.parse(localStorage.getItem('memos')) || [];
+            memos.splice(index, 1);
+            localStorage.setItem('memos', JSON.stringify(memos));
+            loadMemos();
+        }
+
+        document.getElementById('memoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveMemo();
+        });
+        loadMemos();
+
+        // アルバム機能
+        function saveAlbum() {
+            const albumName = document.getElementById('albumName').value;
+            if (albumName.trim() !== "") {
+                const albums = JSON.parse(localStorage.getItem('albums')) || [];
+                albums.push({ name: albumName, photos: [], comments: [] });
+                localStorage.setItem('albums', JSON.stringify(albums));
+                document.getElementById('albumName').value = '';  // アルバム名入力欄をクリア
+                loadAlbums();
+            }
+        }
+
+        function loadAlbums() {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            const albumSelect = document.getElementById('albumSelect');
+            const albumCommentSelect = document.getElementById('albumCommentSelect');
+            const albumsDisplay = document.getElementById('albumsDisplay');
+            albumSelect.innerHTML = '';
+            albumCommentSelect.innerHTML = '';
+            albumsDisplay.innerHTML = '';
+
+            albums.forEach((album, index) => {
+                const albumOption = document.createElement('option');
+                albumOption.value = index;
+                albumOption.textContent = album.name;
+                albumSelect.appendChild(albumOption);
+
+                const commentOption = document.createElement('option');
+                commentOption.value = index;
+                commentOption.textContent = album.name;
+                albumCommentSelect.appendChild(commentOption);
+
+                const newAlbum = document.createElement('div');
+                newAlbum.classList.add('album');
+                newAlbum.setAttribute('data-album-index', index);
+                newAlbum.innerHTML = `<div class="album-header">
+                        <h3>${album.name}</h3>
+                        <button onclick="toggleAlbum(${index})">表示/非表示</button>
+                        <button onclick="deleteAlbum(${index})" style="margin-left: 10px;">アルバム削除</button>
+                    </div>
+                    <div class="thumbnail-container"></div>
+                    <div class="photos" style="display: none;">
+                        <button onclick="bulkDeletePhotos(${index})" style="margin-bottom: 10px;">選択した写真を削除</button>
+                    </div>
+                    <div class="comments" style="display: none;"></div>`;
+                albumsDisplay.appendChild(newAlbum);
+
+                const thumbnailContainer = newAlbum.querySelector('.thumbnail-container');
+                album.photos.forEach(photo => {
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = photo;
+                    thumbnail.classList.add('thumbnail');
+                    thumbnail.addEventListener('click', () => selectPhoto(index, photo));
+                    thumbnailContainer.appendChild(thumbnail);
+                });
+            });
+        }
+
+        function toggleAlbum(index) {
+            const album = document.querySelector(`[data-album-index="${index}"]`);
+            const photosDisplay = album.querySelector('.photos');
+            const commentsDisplay = album.querySelector('.comments');
+            const thumbnailContainer = album.querySelector('.thumbnail-container');
+
+            if (photosDisplay.style.display === 'none') {
+                const albums = JSON.parse(localStorage.getItem('albums')) || [];
+                const albumData = albums[index];
+
+                photosDisplay.innerHTML = '<button onclick="bulkDeletePhotos(' + index + ')" style="margin-bottom: 10px;">選択した写真を削除</button>';
+                albumData.photos.forEach((photo, photoIndex) => {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.classList.add('photo');
+                    photoDiv.innerHTML = `<input type="checkbox" class="photo-checkbox" data-photo-index="${photoIndex}"><img src="${photo}" alt="Photo">
+                        <div class="actions" style="position: absolute; top: 10px; right: 10px;">
+                            <button onclick="deletePhoto(${index}, ${photoIndex})">削除</button>
+                        </div>`;
+                    photosDisplay.appendChild(photoDiv);
+                });
+
+                commentsDisplay.innerHTML = '';
+                albumData.comments.forEach((comment, commentIndex) => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.classList.add('comment');
+                    commentDiv.innerHTML = `<p>${comment}</p>
+                        <div class="actions" style="position: absolute; top: 10px; right: 10px;">
+                            <button onclick="deleteComment(${index}, ${commentIndex})">削除</button>
+                        </div>`;
+                    commentsDisplay.appendChild(commentDiv);
+                });
+
+                photosDisplay.style.display = 'block';
+                commentsDisplay.style.display = 'block';
+                thumbnailContainer.style.display = 'none';
+            } else {
+                photosDisplay.style.display = 'none';
+                commentsDisplay.style.display = 'none';
+                thumbnailContainer.style.display = 'flex';
+            }
+        }
+
+        function selectPhoto(albumIndex, photoUrl) {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            const album = albums[albumIndex];
+            const photoIndex = album.photos.indexOf(photoUrl);
+            const photoCheckbox = document.querySelector(`[data-album-index="${albumIndex}"] .photo-checkbox[data-photo-index="${photoIndex}"]`);
+            photoCheckbox.checked = !photoCheckbox.checked;
+        }
+
+        function bulkDeletePhotos(albumIndex) {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            const album = albums[albumIndex];
+            const selectedPhotos = document.querySelectorAll(`[data-album-index="${albumIndex}"] .photo-checkbox:checked`);
+            selectedPhotos.forEach(photoCheckbox => {
+                const photoIndex = photoCheckbox.getAttribute('data-photo-index');
+                album.photos.splice(photoIndex, 1);
+            });
+            localStorage.setItem('albums', JSON.stringify(albums));
+            loadAlbums();
+            toggleAlbum(albumIndex);
+        }
+
+        function deleteAlbum(index) {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            albums.splice(index, 1);
+            localStorage.setItem('albums', JSON.stringify(albums));
+            loadAlbums();
+        }
+
+        function deletePhoto(albumIndex, photoIndex) {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            albums[albumIndex].photos.splice(photoIndex, 1);
+            localStorage.setItem('albums', JSON.stringify(albums));
+            toggleAlbum(albumIndex);
+        }
+
+        function deleteComment(albumIndex, commentIndex) {
+            const albums = JSON.parse(localStorage.getItem('albums')) || [];
+            albums[albumIndex].comments.splice(commentIndex, 1);
+            localStorage.setItem('albums', JSON.stringify(albums));
+            toggleAlbum(albumIndex);
+        }
+
+        document.getElementById('albumForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveAlbum();
+        });
+        loadAlbums();
+
+        document.getElementById('photoUploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const albumIndex = document.getElementById('albumSelect').value;
+            const photos = document.getElementById('photoUpload').files;
+            if (albumIndex && photos.length > 0) {
+                const albums = JSON.parse(localStorage.getItem('albums')) || [];
+                for (let i = 0; i < photos.length; i++) {
+                    const photo = photos[i];
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        albums[albumIndex].photos.push(event.target.result);
+                        localStorage.setItem('albums', JSON.stringify(albums));
+                        loadAlbums();
+                    };
+                    reader.readAsDataURL(photo);
+                }
+                document.getElementById('photoUpload').value = '';  // ファイル入力をクリア
+            }
+        });
+
+        document.getElementById('commentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const albumIndex = document.getElementById('albumCommentSelect').value;
+            const comment = document.getElementById('comment').value;
+            if (albumIndex && comment.trim() !== "") {
+                const albums = JSON.parse(localStorage.getItem('albums')) || [];
+                albums[albumIndex].comments.push(comment);
+                localStorage.setItem('albums', JSON.stringify(albums));
+                document.getElementById('comment').value = '';  // コメント入力欄をクリア
+                loadAlbums();
+            }
+        });
+
+        // 共有カレンダー機能
+        function saveEvent() {
+            const eventStartDate = document.getElementById('eventStartDate').value;
+            const eventEndDate = document.getElementById('eventEndDate').value;
+            const eventAllDay = document.getElementById('eventAllDay').checked;
+            const eventDescription = document.getElementById('eventDescription').value;
+            const eventPerson = document.getElementById('eventPerson').value;
+            if (eventStartDate && eventDescription.trim() !== "" && eventPerson) {
+                const events = JSON.parse(localStorage.getItem('events')) || [];
+                events.push({ startDate: eventStartDate, endDate: eventEndDate, allDay: eventAllDay, description: eventDescription, person: eventPerson });
+                localStorage.setItem('events', JSON.stringify(events));
+                document.getElementById('eventStartDate').value = '';  // 開始日付入力欄をクリア
+                document.getElementById('eventEndDate').value = '';  // 終了日付入力欄をクリア
+                document.getElementById('eventDescription').value = '';  // 予定内容入力欄をクリア
+                document.getElementById('eventAllDay').checked = false;  // 終日チェックボックスをクリア
+                loadEvents();
+            }
+        }
+
+        function loadEvents() {
+            const events = JSON.parse(localStorage.getItem('events')) || [];
+            const calendarDisplay = document.getElementById('calendarDisplay');
+            calendarDisplay.innerHTML = '';
+            const days = {};
+
+            events.forEach((event, index) => {
+                const eventStartDate = new Date(event.startDate).toLocaleDateString();
+                if (!days[eventStartDate]) {
+                    days[eventStartDate] = [];
+                }
+                days[eventStartDate].push({ ...event, index });
+            });
+
+            Object.keys(days).sort().forEach(day => {
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('calendar-day');
+                dayDiv.innerHTML = `<header>${day}</header>`;
+                days[day].forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.classList.add('calendar-event', event.person === 'yusaku' ? 'yusaku-event' : event.person === 'minami' ? 'minami-event' : 'common-event');
+                    eventDiv.innerHTML = `<strong>${event.allDay ? '終日' : new Date(event.startDate).toLocaleString() + (event.endDate ? ' - ' + new Date(event.endDate).toLocaleString() : '')}</strong>: ${event.description}
+                        <div class="actions">
+                            <button onclick="deleteEvent(${event.index})">削除</button>
+                        </div>`;
+                    dayDiv.appendChild(eventDiv);
+                });
+                calendarDisplay.appendChild(dayDiv);
+            });
+        }
+
+        function deleteEvent(index) {
+            const events = JSON.parse(localStorage.getItem('events')) || [];
+            events.splice(index, 1);
+            localStorage.setItem('events', JSON.stringify(events));
+            loadEvents();
+        }
+
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveEvent();
+        });
+        loadEvents();
+
+        // メッセージ機能
+        function saveMessage() {
+            const messageText = document.getElementById('message').value;
+            const messageSender = document.getElementById('messageSender').value;
+            const messageDate = new Date().toLocaleString();
+            if (messageText.trim() !== "") {
+                const messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push({ text: messageText, sender: messageSender, date: messageDate });
+                localStorage.setItem('messages', JSON.stringify(messages));
+                document.getElementById('message').value = '';  // メッセージ入力欄をクリア
+                loadMessages();
+            }
+        }
+
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const messageDisplay = document.getElementById('messageDisplay');
+            messageDisplay.innerHTML = '';
+            messages.forEach((message, index) => {
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message', message.sender);
+                newMessage.innerHTML = `<p>${message.text}</p>
+                    <small>${message.sender} - ${message.date}</small>
+                    <div class="actions">
+                        <button onclick="deleteMessage(${index})">削除</button>
+                    </div>`;
+                messageDisplay.appendChild(newMessage);
+            });
+        }
+
+        function deleteMessage(index) {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.splice(index, 1);
+            localStorage.setItem('messages', JSON.stringify(messages));
+            loadMessages();
+        }
+
+        document.getElementById('messageForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveMessage();
+        });
+        loadMessages();
+    </script>
+</body>
+</html>
