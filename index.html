@@ -195,107 +195,138 @@
             top: 10px;
             right: 10px;
         }
+        .password-protected {
+            display: none;
+        }
+        #passwordScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Yusaku and Minami's Homepage</h1>
-        <p id="daysTogether"></p>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="#memoSection">メモ</a></li>
-            <li><a href="#albumSection">アルバム</a></li>
-            <li><a href="#calendarSection">共有カレンダー</a></li>
-            <li><a href="#messageSection">メッセージ</a></li>
-        </ul>
-    </nav>
-    <main>
-        <!-- メモ機能 -->
-        <section id="memoSection" class="section">
-            <h2>メモ</h2>
-            <form id="memoForm">
-                <label for="memo">新しいメモ:</label>
-                <textarea id="memo" name="memo" rows="4" cols="50" required></textarea>
-                <label for="memoSender">送信者:</label>
-                <select id="memoSender" name="memoSender" required>
-                    <option value="yusaku">Yusaku</option>
-                    <option value="minami">Minami</option>
-                </select>
-                <button type="submit">保存</button>
-            </form>
-            <div id="memoDisplay"></div>
-        </section>
+    <div id="passwordScreen">
+        <h2>合言葉を入力してください</h2>
+        <input type="password" id="passwordInput" placeholder="合言葉を入力">
+        <button onclick="checkPassword()">送信</button>
+        <p id="errorMessage" style="color: red; display: none;">合言葉が違います。もう一度入力してください。</p>
+    </div>
+    <div id="protectedContent" class="password-protected">
+        <header>
+            <h1>Yusaku and Minami's Homepage</h1>
+            <p id="daysTogether"></p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#memoSection">メモ</a></li>
+                <li><a href="#albumSection">アルバム</a></li>
+                <li><a href="#calendarSection">共有カレンダー</a></li>
+                <li><a href="#messageSection">メッセージ</a></li>
+            </ul>
+        </nav>
+        <main>
+            <!-- メモ機能 -->
+            <section id="memoSection" class="section">
+                <h2>メモ</h2>
+                <form id="memoForm">
+                    <label for="memo">新しいメモ:</label>
+                    <textarea id="memo" name="memo" rows="4" cols="50" required></textarea>
+                    <label for="memoSender">送信者:</label>
+                    <select id="memoSender" name="memoSender" required>
+                        <option value="yusaku">Yusaku</option>
+                        <option value="minami">Minami</option>
+                    </select>
+                    <button type="submit">保存</button>
+                </form>
+                <div id="memoDisplay"></div>
+            </section>
 
-        <!-- アルバム機能 -->
-        <section id="albumSection" class="section">
-            <h2>アルバム</h2>
-            <form id="albumForm">
-                <label for="albumName">アルバム名:</label>
-                <input type="text" id="albumName" name="albumName" required>
-                <button type="submit">作成</button>
-            </form>
+            <!-- アルバム機能 -->
+            <section id="albumSection" class="section">
+                <h2>アルバム</h2>
+                <form id="albumForm">
+                    <label for="albumName">アルバム名:</label>
+                    <input type="text" id="albumName" name="albumName" required>
+                    <button type="submit">作成</button>
+                </form>
 
-            <form id="photoUploadForm">
-                <label for="albumSelect">アルバムを選択:</label>
-                <select id="albumSelect" name="albumSelect" required></select>
-                <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple required>
-                <button type="submit">アップロード</button>
-            </form>
+                <form id="photoUploadForm">
+                    <label for="albumSelect">アルバムを選択:</label>
+                    <select id="albumSelect" name="albumSelect" required></select>
+                    <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple required>
+                    <button type="submit">アップロード</button>
+                </form>
 
-            <form id="commentForm">
-                <label for="albumCommentSelect">アルバムを選択:</label>
-                <select id="albumCommentSelect" name="albumCommentSelect" required></select>
-                <textarea id="comment" name="comment" rows="4" cols="50" placeholder="コメントを追加"></textarea>
-                <button type="submit">コメント追加</button>
-            </form>
-            <div id="albumsDisplay"></div>
-        </section>
+                <form id="commentForm">
+                    <label for="albumCommentSelect">アルバムを選択:</label>
+                    <select id="albumCommentSelect" name="albumCommentSelect" required></select>
+                    <textarea id="comment" name="comment" rows="4" cols="50" placeholder="コメントを追加"></textarea>
+                    <button type="submit">コメント追加</button>
+                </form>
+                <div id="albumsDisplay"></div>
+            </section>
 
-        <!-- 共有カレンダー機能 -->
-        <section id="calendarSection" class="section">
-            <h2>共有カレンダー</h2>
-            <div id="calendarDisplay" class="calendar"></div>
-            <form id="eventForm">
-                <label for="eventStartDate">開始日付と時間:</label>
-                <input type="datetime-local" id="eventStartDate" name="eventStartDate" required>
-                <label for="eventEndDate">終了日付と時間:</label>
-                <input type="datetime-local" id="eventEndDate" name="eventEndDate">
-                <label for="eventAllDay">終日:</label>
-                <input type="checkbox" id="eventAllDay" name="eventAllDay">
-                <label for="eventDescription">予定内容:</label>
-                <input type="text" id="eventDescription" name="eventDescription" required>
-                <label for="eventPerson">誰の予定ですか？:</label>
-                <select id="eventPerson" name="eventPerson" required>
-                    <option value="yusaku">Yusaku</option>
-                    <option value="minami">Minami</option>
-                    <option value="common">共通</option>
-                </select>
-                <button type="submit">追加</button>
-            </form>
-        </section>
+            <!-- 共有カレンダー機能 -->
+            <section id="calendarSection" class="section">
+                <h2>共有カレンダー</h2>
+                <div id="calendarDisplay" class="calendar"></div>
+                <form id="eventForm">
+                    <label for="eventStartDate">開始日付と時間:</label>
+                    <input type="datetime-local" id="eventStartDate" name="eventStartDate" required>
+                    <label for="eventEndDate">終了日付と時間:</label>
+                    <input type="datetime-local" id="eventEndDate" name="eventEndDate">
+                    <label for="eventAllDay">終日:</label>
+                    <input type="checkbox" id="eventAllDay" name="eventAllDay">
+                    <label for="eventDescription">予定内容:</label>
+                    <input type="text" id="eventDescription" name="eventDescription" required>
+                    <label for="eventPerson">誰の予定ですか？:</label>
+                    <select id="eventPerson" name="eventPerson" required>
+                        <option value="yusaku">Yusaku</option>
+                        <option value="minami">Minami</option>
+                        <option value="common">共通</option>
+                    </select>
+                    <button type="submit">追加</button>
+                </form>
+            </section>
 
-        <!-- メッセージ機能 -->
-        <section id="messageSection" class="section">
-            <h2>メッセージ</h2>
-            <form id="messageForm">
-                <label for="message">新しいメッセージ:</label>
-                <textarea id="message" name="message" rows="4" cols="50" required></textarea>
-                <label for="messageSender">送信者:</label>
-                <select id="messageSender" name="messageSender" required>
-                    <option value="yusaku">Yusaku</option>
-                    <option value="minami">Minami</option>
-                </select>
-                <button type="submit">送信</button>
-            </form>
-            <div id="messageDisplay"></div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Yusaku and Minami's Homepage</p>
-    </footer>
+            <!-- メッセージ機能 -->
+            <section id="messageSection" class="section">
+                <h2>メッセージ</h2>
+                <form id="messageForm">
+                    <label for="message">新しいメッセージ:</label>
+                    <textarea id="message" name="message" rows="4" cols="50" required></textarea>
+                    <label for="messageSender">送信者:</label>
+                    <select id="messageSender" name="messageSender" required>
+                        <option value="yusaku">Yusaku</option>
+                        <option value="minami">Minami</option>
+                    </select>
+                    <button type="submit">送信</button>
+                </form>
+                <div id="messageDisplay"></div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Yusaku and Minami's Homepage</p>
+        </footer>
+    </div>
 
     <script>
+        const PASSWORD = "ふうちゃん";
+
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput').value;
+            if (passwordInput === PASSWORD) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('protectedContent').style.display = 'block';
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+
         // 日付カウンターの設定
         function updateDaysTogether() {
             const startDate = new Date('2022-05-07');
@@ -356,7 +387,7 @@
                 const albums = JSON.parse(localStorage.getItem('albums')) || [];
                 albums.push({ name: albumName, photos: [], comments: [] });
                 localStorage.setItem('albums', JSON.stringify(albums));
-                document.getElementById('albumName').value = '';  // アルバム名入力欄をクリア
+                       document.getElementById('albumName').value = '';  // アルバム名入力欄をクリア
                 loadAlbums();
             }
         }
@@ -422,7 +453,7 @@
                     const photoDiv = document.createElement('div');
                     photoDiv.classList.add('photo');
                     photoDiv.innerHTML = `<input type="checkbox" class="photo-checkbox" data-photo-index="${photoIndex}"><img src="${photo}" alt="Photo">
-                        <div class="actions" style="position: absolute; top: 10px; right: 10px;">
+                        <div class="actions">
                             <button onclick="deletePhoto(${index}, ${photoIndex})">削除</button>
                         </div>`;
                     photosDisplay.appendChild(photoDiv);
@@ -433,7 +464,7 @@
                     const commentDiv = document.createElement('div');
                     commentDiv.classList.add('comment');
                     commentDiv.innerHTML = `<p>${comment}</p>
-                        <div class="actions" style="position: absolute; top: 10px; right: 10px;">
+                        <div class="actions">
                             <button onclick="deleteComment(${index}, ${commentIndex})">削除</button>
                         </div>`;
                     commentsDisplay.appendChild(commentDiv);
@@ -563,14 +594,23 @@
                 days[eventStartDate].push({ ...event, index });
             });
 
-            Object.keys(days).sort().forEach(day => {
+            const sortedDays = Object.keys(days).sort((a, b) => new Date(a) - new Date(b));
+
+            sortedDays.forEach(day => {
                 const dayDiv = document.createElement('div');
                 dayDiv.classList.add('calendar-day');
                 dayDiv.innerHTML = `<header>${day}</header>`;
                 days[day].forEach(event => {
                     const eventDiv = document.createElement('div');
-                    eventDiv.classList.add('calendar-event', event.person === 'yusaku' ? 'yusaku-event' : event.person === 'minami' ? 'minami-event' : 'common-event');
-                    eventDiv.innerHTML = `<strong>${event.allDay ? '終日' : new Date(event.startDate).toLocaleString() + (event.endDate ? ' - ' + new Date(event.endDate).toLocaleString() : '')}</strong>: ${event.description}
+                    eventDiv.classList.add('calendar-event');
+                    if (event.person === 'yusaku') {
+                        eventDiv.classList.add('yusaku-event');
+                    } else if (event.person === 'minami') {
+                        eventDiv.classList.add('minami-event');
+                    } else {
+                        eventDiv.classList.add('common-event');
+                    }
+                    eventDiv.innerHTML = `<p>${event.description}</p>
                         <div class="actions">
                             <button onclick="deleteEvent(${event.index})">削除</button>
                         </div>`;
@@ -613,7 +653,8 @@
             messageDisplay.innerHTML = '';
             messages.forEach((message, index) => {
                 const newMessage = document.createElement('div');
-                newMessage.classList.add('message', message.sender);
+                newMessage.classList.add('message');
+                newMessage.classList.add(message.sender);
                 newMessage.innerHTML = `<p>${message.text}</p>
                     <small>${message.sender} - ${message.date}</small>
                     <div class="actions">
